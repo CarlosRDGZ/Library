@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class LibraryFile
 {
     private RandomAccessFile file;
-    private final int RECORD_SIZE = 110;
+    private final int RECORD_SIZE = 114;
 
     public LibraryFile(String fileName)
     {
@@ -43,6 +43,8 @@ public class LibraryFile
 
             file.writeBytes(inputString(book.getEditorial(),13));
 
+            file.writeInt(book.getCopies());
+
         }
         catch (IOException ex)
         {Logger.getLogger(LibraryFile.class.getName()).log(Level.SEVERE, null, ex);}
@@ -72,7 +74,9 @@ public class LibraryFile
             file.read(bEditorial);
             String editorial = outputString(bCode);
 
-            return new Book(title, author, code, year, editorial);
+            int copies = file.readInt();
+
+            return new Book(title, author, code, year, editorial, copies);
         }
         catch (IOException ex)
         {Logger.getLogger(LibraryFile.class.getName()).log(Level.SEVERE, null, ex);}

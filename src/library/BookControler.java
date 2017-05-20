@@ -4,55 +4,36 @@ public class BookControler
 {
 
     static public Book createBook(String title, String author,
-            int yearPrint, String editorial)
+            int yearPrint, String editorial, int copies)
     {
-
-        char title_num[] = new char[3];
-        char author_num[] = new char[3];
-        char editorial_num[] = new char[3];
+        String code = "";
 
         if (title.length() > 2)
         {
-            for(int i = 0; i < 3; i++)
-            {title_num[i] = title.charAt(i);}
+            for(int i = 0; i < 2; i++)
+                code +=title.charAt(i);
         }
         else
-        {
-            for(int i = 0; i < title.length(); i++)
-            {title_num[i] = title.charAt(i);}
-        }
+            code += title.charAt(0);
 
-        if (author.length() >= 3) {
-            for(int i = 0; i < 3; i++)
-            {author_num[i] = author.charAt(i);}
+        if (author.length() > 2) {
+            for(int i = 0; i < 2; i++)
+                code += author.charAt(i);
         }
-        else{
-            for(int i = 0; i < title.length(); i++)
-            {author_num[i] = title.charAt(i);}
-        }
+        else
+            code += author.charAt(0);
 
         if (editorial.length() > 2)
         {
-            for(int i = 0; i < 3; i++)
-            {editorial_num[i] = editorial.charAt(i);}
+            for(int i = 0; i < 2; i++)
+                code += editorial.charAt(i);
         }
-        else{
-            for(int i = 0; i < editorial.length(); i++)
-            {editorial_num[i] = editorial.charAt(i);}
-        }
-        String code = "";
-
-        for(int i = 0; i < 3; i++)
-            code += title_num[i];
-
-        for(int i = 0; i < 3; i++)
-            code += author_num[i];
-
-        for(int i = 0; i < 3; i++)
-            code += editorial_num[i];
+        else
+            code += editorial.charAt(0);
 
         code += Integer.toString(yearPrint);
+        code = code.toUpperCase();
 
-        return new Book(title, author, code, yearPrint, editorial);
+        return new Book(title, author, code, yearPrint, editorial, copies);
     }
 }

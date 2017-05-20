@@ -1,17 +1,20 @@
 package library;
 
-import javax.swing.DefaultListModel;
+import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class Library extends javax.swing.JFrame
 {
-    private DefaultListModel books;
+    private DefaultTableModel books;
+    private LibraryFile file;
 
     public Library()
     {
         initComponents();
-        books = new DefaultListModel();
-        lstLibros.setModel(books);
+        books = (DefaultTableModel) tblListBooks.getModel();
+        tblListBooks.setModel(books);
+        file = new LibraryFile("Public_Library");
     }
 
     @SuppressWarnings("unchecked")
@@ -19,21 +22,21 @@ public class Library extends javax.swing.JFrame
     private void initComponents() {
 
         frmSetCopias = new javax.swing.JFrame();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lstLibros = new javax.swing.JList<>();
         lblHeader = new javax.swing.JLabel();
         lblCantCopies = new javax.swing.JLabel();
         lblTitle = new javax.swing.JLabel();
         lblAuthor = new javax.swing.JLabel();
         lblYearPrint = new javax.swing.JLabel();
         lblEditorial = new javax.swing.JLabel();
-        txtCantCopies = new javax.swing.JTextField();
+        txtCopies = new javax.swing.JTextField();
         txtTitle = new javax.swing.JTextField();
         txtAuthor = new javax.swing.JTextField();
         txtYearPrint = new javax.swing.JTextField();
         txtEditorial = new javax.swing.JTextField();
         btnSave = new javax.swing.JButton();
         btnActualizarCopias = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblListBooks = new javax.swing.JTable();
 
         javax.swing.GroupLayout frmSetCopiasLayout = new javax.swing.GroupLayout(frmSetCopias.getContentPane());
         frmSetCopias.getContentPane().setLayout(frmSetCopiasLayout);
@@ -47,13 +50,6 @@ public class Library extends javax.swing.JFrame
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        lstLibros.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(lstLibros);
 
         lblHeader.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblHeader.setText("BIBLIOTECA");
@@ -69,9 +65,9 @@ public class Library extends javax.swing.JFrame
 
         lblEditorial.setText("Editorial:");
 
-        txtCantCopies.addActionListener(new java.awt.event.ActionListener() {
+        txtCopies.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCantCopiesActionPerformed(evt);
+                txtCopiesActionPerformed(evt);
             }
         });
 
@@ -84,14 +80,32 @@ public class Library extends javax.swing.JFrame
 
         btnActualizarCopias.setText("Actualizar Copias");
 
+        tblListBooks.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Codigo", "Título", "Autor", "Editorial", "Copias"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tblListBooks);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblTitle)
                             .addComponent(lblAuthor)
@@ -102,30 +116,30 @@ public class Library extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtYearPrint)
                             .addComponent(txtAuthor)
-                            .addComponent(txtEditorial, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
-                            .addComponent(txtCantCopies, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtEditorial, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtCopies, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtTitle)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 17, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnSave, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnActualizarCopias, javax.swing.GroupLayout.Alignment.TRAILING))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnActualizarCopias, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(136, 136, 136)))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(317, 317, 317)
                 .addComponent(lblHeader)
-                .addGap(210, 210, 210))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
+                .addContainerGap()
                 .addComponent(lblHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTitle)
@@ -144,20 +158,20 @@ public class Library extends javax.swing.JFrame
                             .addComponent(txtEditorial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtCantCopies, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCopies, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblCantCopies))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnSave)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnActualizarCopias)
-                        .addGap(0, 25, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(btnActualizarCopias))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtCantCopiesActionPerformed(java.awt.event.ActionEvent evt)
+    private void txtCopiesActionPerformed(java.awt.event.ActionEvent evt)
     {}
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt)
@@ -166,29 +180,29 @@ public class Library extends javax.swing.JFrame
         {
 
             Book book = BookControler.createBook(txtTitle.getText(), txtAuthor.getText(),
-                    Integer.valueOf(txtYearPrint.getText()), txtEditorial.getText());
-            
-            books.addElement(book);
+                    Integer.valueOf(txtYearPrint.getText()), txtEditorial.getText(), Integer.valueOf(txtCopies.getText()));
+
+            addToTable(book);
         }
     }
 
     public boolean copiasValidas()
     {
-        if(txtCantCopies != null)
+        if(txtCopies != null)
         {
             try
             {
-                int copias = Integer.valueOf(txtCantCopies.getText());
+                int copias = Integer.valueOf(txtCopies.getText());
                 if(copias < 0)
                 {
-                    txtCantCopies.setText("");
+                    txtCopies.setText("");
                     JOptionPane.showMessageDialog(this, "Copias debe ser un valor entero", "ERROR", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             }
             catch ( NumberFormatException e )
             {
-                txtCantCopies.setText("");
+                txtCopies.setText("");
                 JOptionPane.showMessageDialog(this, "Copias debe ser un valor entero", "ERROR", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -217,17 +231,21 @@ public class Library extends javax.swing.JFrame
     }
 
     public boolean camposLlenos(){
-        if(txtYearPrint.getText().isEmpty() ||
-                txtAuthor.getText().isEmpty() ||
-                txtEditorial.getText().isEmpty() ||
-                txtTitle.getText().isEmpty())
+        if(txtYearPrint.getText().isEmpty() || txtAuthor.getText().isEmpty() ||
+            txtEditorial.getText().isEmpty() || txtTitle.getText().isEmpty())
         {
-
             JOptionPane.showMessageDialog(this, "Debe llenar todos los campos");
             return false;
         }
         else
             return true;
+    }
+
+    private void addToTable(Book book)
+    {
+        String[] newBook = {book.getCode(), book.getTitle(), book.getAuthor(),
+            book.getEditorial(), Integer.toString(book.getCopies())};
+        books.addRow(newBook);
     }
 
     public static void main(String args[])
@@ -268,16 +286,16 @@ public class Library extends javax.swing.JFrame
     private javax.swing.JButton btnActualizarCopias;
     private javax.swing.JButton btnSave;
     private javax.swing.JFrame frmSetCopias;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblAuthor;
     private javax.swing.JLabel lblCantCopies;
     private javax.swing.JLabel lblEditorial;
     private javax.swing.JLabel lblHeader;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblYearPrint;
-    private javax.swing.JList<String> lstLibros;
+    private javax.swing.JTable tblListBooks;
     private javax.swing.JTextField txtAuthor;
-    private javax.swing.JTextField txtCantCopies;
+    private javax.swing.JTextField txtCopies;
     private javax.swing.JTextField txtEditorial;
     private javax.swing.JTextField txtTitle;
     private javax.swing.JTextField txtYearPrint;
