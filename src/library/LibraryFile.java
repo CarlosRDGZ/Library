@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class LibraryFile
 {
     private RandomAccessFile file;
-    private final int RECORD_SIZE = 114;
+    private final int RECORD_SIZE = 122;
 
     public LibraryFile(String fileName)
     {
@@ -26,10 +26,7 @@ public class LibraryFile
     {
         try
         {
-            long position = file.length();
-
-            if(position > -1)
-                position = RECORD_SIZE * recordNum;
+            long position = RECORD_SIZE * recordNum;
 
             file.seek(position);
 
@@ -44,6 +41,10 @@ public class LibraryFile
             file.writeBytes(inputString(book.getEditorial(),13));
 
             file.writeInt(book.getCopies());
+            
+            file.writeInt(book.getAvailable());
+            
+            file.writeInt(book.getRegistryNumber());
 
         }
         catch (IOException ex)
@@ -62,7 +63,7 @@ public class LibraryFile
 
             byte[] bAuthor = new byte[50];
             file.read(bAuthor);
-            String author = outputString(bTitle);
+            String author = outputString(bAuthor);
 
             byte[] bCode = new byte[13];
             file.read(bCode);
@@ -72,11 +73,16 @@ public class LibraryFile
 
             byte[] bEditorial = new byte[13];
             file.read(bEditorial);
-            String editorial = outputString(bCode);
+            String editorial = outputString(bEditorial);
 
             int copies = file.readInt();
+            
+            int available = file.readInt();
+            
+            int registryNumber = file.readInt();
 
-            return new Book(title, author, code, year, editorial, copies);
+            return new Book(title, author, code, year, editorial,
+                    copies, available, registryNumber);
         }
         catch (IOException ex)
         {Logger.getLogger(LibraryFile.class.getName()).log(Level.SEVERE, null, ex);}
@@ -95,7 +101,7 @@ public class LibraryFile
         return allRecords;
     }
 
-    private int numberOfRecords()
+    public int numberOfRecords()
     {
         try
         {
@@ -116,6 +122,9 @@ public class LibraryFile
     private String outputString(byte b[])
     {
         String str = new String(b);
-        return str.substring(0, str.indexOf('\0'));
+        if(str.indexOf('\0') != -1)
+            return str.substring(0, str.indexOf('\0'));
+        else
+            return str;
     }
 }

@@ -8,6 +8,8 @@ public class Book
     private int yearPrint;
     private String editorial;
     private int copies;
+    private int available;
+    private int registryNumber;
 
     public Book(){}
 
@@ -20,6 +22,33 @@ public class Book
         this.yearPrint = yearPrint;
         this.editorial = editorial;
         this.copies = copies;
+        this.available = copies;
+    }
+    
+     public Book(String title, String author, String code,
+            int yearPrint, String editorial, int copies, int registryNumber)
+    {
+        this.title = title;
+        this.author = author;
+        this.code = code;
+        this.yearPrint = yearPrint;
+        this.editorial = editorial;
+        this.copies = copies;
+        this.available = copies;
+        this.registryNumber = registryNumber;
+    }
+     
+    public Book(String title, String author, String code,
+            int yearPrint, String editorial, int copies, int available, int registryNumber)
+    {
+        this.title = title;
+        this.author = author;
+        this.code = code;
+        this.yearPrint = yearPrint;
+        this.editorial = editorial;
+        this.copies = copies;
+        this.available = available;
+        this.registryNumber = registryNumber;
     }
 
     public String getTitle()
@@ -56,6 +85,16 @@ public class Book
     {
         this.title = title;
     }
+    
+    public void setAvailable(int available)
+    {
+        this.available = available;
+    }
+    
+    public void setRegistryNumber(int registryNumber)
+    {
+        this.registryNumber = registryNumber;
+    }
 
     public void setAuthor(String author)
     {
@@ -76,8 +115,19 @@ public class Book
     {
         this.editorial = editorial;
     }
+    
     public void setCopies(int copies)
     {
         this.copies = copies;
+    }
+    
+    public int getAvailable()
+    {
+        return available;
+    }
+    
+    public int getRegistryNumber()
+    {
+        return registryNumber;
     }
 }
