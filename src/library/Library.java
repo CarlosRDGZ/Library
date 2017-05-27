@@ -1,24 +1,25 @@
 package library;
 
-import java.awt.event.ActionEvent;
+import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class Library extends javax.swing.JFrame
 {
-    private DefaultTableModel books;
     private ArrayList<Book> books_array;
     private LibraryFile file;
+    private ArrayList<Book> searchResult = new ArrayList();
+    private boolean showingSearch;
 
     public Library()
     {
         initComponents();
         
-        btnRefresh.setVisible(false);
-
+        
         /*Crea el modelo para la tabla, books*/
-        books = (DefaultTableModel) tblListBooks.getModel();
+        DefaultTableModel books = (DefaultTableModel) tblListBooks.getModel();
         /*Le asigna el modelo a la tabla tblListBooks*/
         tblListBooks.setModel(books);
 
@@ -28,12 +29,13 @@ public class Library extends javax.swing.JFrame
         books_array = file.readAll();
         for(Book book:books_array)
         {
-            addToTable(book);
+            addToTable(book, books);
         }
+        showingSearch = false;
 
         /*Estable las dimenciones del frame frmNewBook
         Evita que se pueda redimencionar*/
-        frmNewBook.setSize(355, 300);
+        frmNewBook.setSize(355, 315);
         frmNewBook.setResizable(false);
 
         /*Estable las dimenciones del frame frmEditRegistry
@@ -41,8 +43,11 @@ public class Library extends javax.swing.JFrame
         frmEditRegistry.setSize(355, 300);
         frmEditRegistry.setResizable(false);
         
-        frmSearch.setSize(410, 330);
+        frmSearch.setSize(410, 355);
         frmSearch.setResizable(false);
+        
+        dlgDelete.setVisible(false);
+        dlgDelete.setSize(dlgDelete.getPreferredSize());
     }
 
     @SuppressWarnings("unchecked")
@@ -92,13 +97,21 @@ public class Library extends javax.swing.JFrame
         lblEditorialS = new javax.swing.JLabel();
         btnSearch = new javax.swing.JButton();
         btnCancelSearch = new javax.swing.JButton();
+        btnShowAll = new javax.swing.JButton();
+        dlgDelete = new javax.swing.JDialog();
+        lblMnsg1D = new javax.swing.JLabel();
+        lblMnsg2D = new javax.swing.JLabel();
+        btnConfirmDelete = new javax.swing.JButton();
+        btnCancelDelete = new javax.swing.JButton();
+        lblTitleD = new javax.swing.JLabel();
         lblHeader = new javax.swing.JLabel();
         btnNewBook = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblListBooks = new javax.swing.JTable();
         btnEditRegistry = new javax.swing.JButton();
         btnNewSearch = new javax.swing.JButton();
-        btnRefresh = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnPrint = new javax.swing.JButton();
 
         frmNewBook.setTitle("Nuevo");
         frmNewBook.setResizable(false);
@@ -285,6 +298,12 @@ public class Library extends javax.swing.JFrame
             }
         });
 
+        txtYearPrintS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtYearPrintSActionPerformed(evt);
+            }
+        });
+
         lblInstSearch.setText("Selecciona los filtros de busqueda");
 
         lblCodeS.setText("Codigo");
@@ -311,6 +330,13 @@ public class Library extends javax.swing.JFrame
             }
         });
 
+        btnShowAll.setText("Mostrar Todos");
+        btnShowAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowAllActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout frmSearchLayout = new javax.swing.GroupLayout(frmSearch.getContentPane());
         frmSearch.getContentPane().setLayout(frmSearchLayout);
         frmSearchLayout.setHorizontalGroup(
@@ -318,43 +344,41 @@ public class Library extends javax.swing.JFrame
             .addGroup(frmSearchLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(frmSearchLayout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblAuthorS)
-                            .addComponent(lblTitleS)
-                            .addComponent(lblCodeS))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtCodeS, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
-                            .addComponent(txtAuthorS)
-                            .addComponent(txtTitleS))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnRdTitle)
-                            .addComponent(btnRdCode)
-                            .addComponent(btnRdAuthor)))
                     .addComponent(lblInstSearch)
                     .addGroup(frmSearchLayout.createSequentialGroup()
                         .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(frmSearchLayout.createSequentialGroup()
                                 .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(lblYearS)
-                                    .addComponent(lblEditorialS))
+                                    .addComponent(lblAuthorS)
+                                    .addComponent(lblTitleS)
+                                    .addComponent(lblCodeS))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtEditorialS, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
-                                    .addComponent(txtYearPrintS)))
+                                    .addComponent(txtAuthorS, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                                    .addComponent(txtTitleS)
+                                    .addComponent(txtCodeS)))
                             .addGroup(frmSearchLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
+                                .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(lblEditorialS)
+                                    .addComponent(lblYearS))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtYearPrintS, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEditorialS, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(frmSearchLayout.createSequentialGroup()
                                 .addComponent(btnCancelSearch)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
+                                .addGap(35, 35, 35)
+                                .addComponent(btnShowAll)
+                                .addGap(26, 26, 26)
                                 .addComponent(btnSearch)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnRdTitle)
+                            .addComponent(btnRdCode)
+                            .addComponent(btnRdAuthor)
                             .addComponent(btnRdEditorial)
                             .addComponent(btnRdYear))))
-                .addGap(0, 23, Short.MAX_VALUE))
+                .addGap(8, 8, 8))
         );
         frmSearchLayout.setVerticalGroup(
             frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -378,21 +402,85 @@ public class Library extends javax.swing.JFrame
                     .addComponent(lblAuthorS)
                     .addComponent(btnRdAuthor))
                 .addGap(18, 18, 18)
-                .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtYearPrintS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblYearS)
-                    .addComponent(btnRdYear))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRdYear, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblYearS)
+                        .addComponent(txtYearPrintS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12)
+                .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnRdEditorial)
+                    .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtEditorialS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblEditorialS))
-                    .addComponent(btnRdEditorial))
+                        .addComponent(lblEditorialS)))
                 .addGap(18, 18, 18)
-                .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnSearch)
+                    .addComponent(btnShowAll)
                     .addComponent(btnCancelSearch))
-                .addContainerGap())
+                .addGap(25, 25, 25))
+        );
+
+        dlgDelete.setTitle("BORRAR");
+        dlgDelete.setIconImage(null);
+        dlgDelete.setLocationByPlatform(true);
+        dlgDelete.setResizable(false);
+        dlgDelete.setType(java.awt.Window.Type.UTILITY);
+
+        lblMnsg1D.setText("¿Deseas borrar este libro?");
+
+        lblMnsg2D.setText("Esta accion no puede deshacerse");
+
+        btnConfirmDelete.setText("Si");
+        btnConfirmDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmDeleteActionPerformed(evt);
+            }
+        });
+
+        btnCancelDelete.setText("No");
+        btnCancelDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelDeleteActionPerformed(evt);
+            }
+        });
+
+        lblTitleD.setText("Titulo Titulo Tituo Titulo Titulo");
+
+        javax.swing.GroupLayout dlgDeleteLayout = new javax.swing.GroupLayout(dlgDelete.getContentPane());
+        dlgDelete.getContentPane().setLayout(dlgDeleteLayout);
+        dlgDeleteLayout.setHorizontalGroup(
+            dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dlgDeleteLayout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(lblMnsg2D, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(dlgDeleteLayout.createSequentialGroup()
+                            .addGap(10, 10, 10)
+                            .addComponent(btnCancelDelete)
+                            .addGap(56, 56, 56)
+                            .addComponent(btnConfirmDelete)))
+                    .addGroup(dlgDeleteLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(lblMnsg1D))
+                    .addComponent(lblTitleD, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+        dlgDeleteLayout.setVerticalGroup(
+            dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dlgDeleteLayout.createSequentialGroup()
+                .addGap(13, 13, 13)
+                .addComponent(lblTitleD)
+                .addGap(18, 18, 18)
+                .addComponent(lblMnsg1D)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblMnsg2D)
+                .addGap(18, 18, 18)
+                .addGroup(dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnConfirmDelete)
+                    .addComponent(btnCancelDelete))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -459,10 +547,17 @@ public class Library extends javax.swing.JFrame
             }
         });
 
-        btnRefresh.setText("Recargar");
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+        btnDelete.setText("Borrar");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
+            }
+        });
+
+        btnPrint.setText("Imprimir");
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
             }
         });
 
@@ -480,12 +575,14 @@ public class Library extends javax.swing.JFrame
                 .addContainerGap(31, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnRefresh)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnNewSearch)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnEditRegistry)
+                .addComponent(btnPrint)
                 .addGap(18, 18, 18)
+                .addComponent(btnDelete)
+                .addGap(18, 18, 18)
+                .addComponent(btnNewSearch)
+                .addGap(18, 18, 18)
+                .addComponent(btnEditRegistry)
+                .addGap(10, 10, 10)
                 .addComponent(btnNewBook)
                 .addGap(62, 62, 62))
         );
@@ -501,8 +598,9 @@ public class Library extends javax.swing.JFrame
                     .addComponent(btnEditRegistry)
                     .addComponent(btnNewBook)
                     .addComponent(btnNewSearch)
-                    .addComponent(btnRefresh))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnDelete)
+                    .addComponent(btnPrint))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         pack();
@@ -516,21 +614,37 @@ public class Library extends javax.swing.JFrame
         if(isDataValid() && areFieldsFull())
         {
             int row = tblListBooks.getSelectedRow();
-            Book book = books_array.get(row);
+            Book book = null;
+            DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
+            
+            for(Book aux_book:books_array)
+            {
+                if(aux_book.getAuthor().equalsIgnoreCase((String)books.getValueAt(row, 2))&&
+                   aux_book.getEditorial().equalsIgnoreCase((String)books.getValueAt(row, 3))&&
+                   aux_book.getTitle().equalsIgnoreCase((String)books.getValueAt(row, 1))&&
+                   aux_book.getYearPrint()==Integer.valueOf((String)books.getValueAt(row, 4))&&
+                   aux_book.getCode().equalsIgnoreCase((String)books.getValueAt(row, 0)))
+                {
+                    book = aux_book;
+                    break;
+                }
+            }
 
             book = BookControler.editBook(txtTitleE.getText(),
                     txtAuthorE.getText(),
                     Integer.valueOf(txtYearPrintE.getText()),
                     txtEditorialE.getText(), book);
-
+            
+            books_array.set(book.getRegistryNumber(), book);
+            file.addRecord(book, book.getRegistryNumber());
+            
             books.setValueAt(book.getCode(), row, 0);
             books.setValueAt(book.getTitle(), row, 1);
             books.setValueAt(book.getAuthor(), row, 2);
             books.setValueAt(book.getEditorial(), row, 3);
             books.setValueAt(Integer.toString(book.getYearPrint()), row, 4);
             
-            books_array.add(row, book);
-            file.addRecord(book, book.getRegistryNumber());
+            tblListBooks.setModel(books);
             
             frmEditRegistry.setVisible(false);
         }
@@ -541,59 +655,220 @@ public class Library extends javax.swing.JFrame
     }//GEN-LAST:event_txtEditorialSActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        ArrayList<Book> searchResult = new ArrayList();
-        DefaultTableModel modelSearchResult = (DefaultTableModel) tblListBooks.getModel();
-        
-        if(btnRdCode.isSelected())
+        if(btnRdCode.isSelected() || btnRdTitle.isSelected() ||
+            btnRdYear.isSelected() || btnRdAuthor.isSelected() ||
+            btnRdEditorial.isSelected())
         {
-            String searchedCode = txtCodeS.getText();
-            for(Book book:books_array)
+            if(isDataValid() && areFieldsFull())
             {
-                if(book.getCode().contains(searchedCode))
+                searchResult.clear();
+                for(Book book:books_array){searchResult.add(book);}  
+
+                if(btnRdCode.isSelected())
                 {
-                    searchResult.add(book);
-                    String[] newBook = {book.getCode(), book.getTitle(), book.getAuthor(),
-                        book.getEditorial(), Integer.toString(book.getYearPrint()),
-                        Integer.toString(book.getCopies()), Integer.toString(book.getAvailable())};
-                    modelSearchResult.addRow(newBook);
+                    ArrayList<Book> search = new ArrayList();
+                    String searchedCode = txtCodeS.getText();
+                    for(Book book:searchResult)
+                    {
+                        if(book.getCode().contains(searchedCode))
+                            search.add(book);
+                    }
+                    searchResult = search;
                 }
+
+                if(btnRdTitle.isSelected())
+                {
+                    String searchedTitle = txtTitleS.getText();
+                    ArrayList<Book> search = new ArrayList();
+                    for(Book book:searchResult)
+                    {
+                        if(book.getTitle().contains(searchedTitle))
+                            search.add(book);
+                    }
+                    searchResult = search;
+                }
+
+                if(btnRdAuthor.isSelected())
+                {
+                    String searchedAuthor = txtAuthorS.getText();
+                    ArrayList<Book> search = new ArrayList();
+                    for(Book book:searchResult)
+                    {
+                        if(book.getAuthor().contains(searchedAuthor))
+                            search.add(book);
+                    }
+                    searchResult = search;
+                }
+
+                if(btnRdYear.isSelected())
+                {
+                    String searchedYear = txtYearPrintS.getText();
+                    ArrayList<Book> search = new ArrayList();
+                    for(Book book:searchResult)
+                    {
+                        if(book.getYearPrint() == Integer.valueOf(searchedYear))
+                            search.add(book);
+                    }
+                    searchResult = search;
+                }
+
+                if(btnRdEditorial.isSelected())
+                {
+                    String searchedEditorial = txtEditorialS.getText();
+                    ArrayList<Book> search = new ArrayList();
+                    for(Book book:searchResult)
+                    {
+                        if(book.getEditorial().contains(searchedEditorial))
+                            search.add(book);
+                    }
+                    searchResult = search;
+                }
+                
+                if(!searchResult.isEmpty())
+                {
+                    DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
+                    updateModel(books,searchResult);
+                    showingSearch = true;
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(this, "No se encontraron resultados",
+                    "Buscar", JOptionPane.INFORMATION_MESSAGE);
+                    DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
+                    tblListBooks.setModel(books);
+                    showingSearch = false;
+                }
+                frmSearch.setVisible(false);
             }
-            tblListBooks = new javax.swing.JTable();
-            tblListBooks.setModel(modelSearchResult);
-            btnRefresh.setVisible(true);
-            frmSearch.setVisible(false);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "Seleccione al menos un filtro",
+                "Buscar", JOptionPane.INFORMATION_MESSAGE);
         }
         
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnNewSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewSearchActionPerformed
-        frmSearch.setVisible(true);
-    }//GEN-LAST:event_btnNewSearchActionPerformed
-
-    private void btnCancelSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelSearchActionPerformed
         txtAuthorS.setText("");
         txtCodeS.setText("");
         txtEditorialS.setText("");
         txtTitleS.setText("");
         txtYearPrintS.setText("");
+        frmSearch.setVisible(true);
+    }//GEN-LAST:event_btnNewSearchActionPerformed
+
+    private void btnCancelSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelSearchActionPerformed
         frmSearch.setVisible(false);
     }//GEN-LAST:event_btnCancelSearchActionPerformed
 
-    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        tblListBooks.setModel(books);
-        btnRefresh.setVisible(false);
-        btnSearch.setVisible(true);
-    }//GEN-LAST:event_btnRefreshActionPerformed
+    private void txtYearPrintSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtYearPrintSActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtYearPrintSActionPerformed
+
+    private void btnShowAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowAllActionPerformed
+        DefaultTableModel books = (DefaultTableModel) tblListBooks.getModel();
+        updateModel(books,books_array);
+        showingSearch = false;
+        frmSearch.setVisible(false);
+    }//GEN-LAST:event_btnShowAllActionPerformed
+
+    private void btnConfirmDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmDeleteActionPerformed
+        int row = tblListBooks.getSelectedRow();
+        int registryNumber = -1;
+        DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
+            
+        for(Book aux_book:books_array)
+        {
+            if(aux_book.getAuthor().equalsIgnoreCase((String)books.getValueAt(row, 2))&&
+                aux_book.getEditorial().equalsIgnoreCase((String)books.getValueAt(row, 3))&&
+                aux_book.getTitle().equalsIgnoreCase((String)books.getValueAt(row, 1))&&
+                aux_book.getYearPrint()==Integer.valueOf((String)books.getValueAt(row, 4))&&
+                aux_book.getCode().equalsIgnoreCase((String)books.getValueAt(row, 0)))
+            {
+                registryNumber = aux_book.getRegistryNumber();
+                break;
+            }
+        }
+        
+        
+            Book book = books_array.get(file.numberOfRecords() - 1);
+            book.setRegistryNumber(registryNumber);
+
+            books_array.set(registryNumber, book);
+            file.addRecord(book, registryNumber);
+        
+            books_array.remove(file.numberOfRecords() - 1);
+            file.delete();
+            
+        if(showingSearch)
+        {
+            if(searchResult.size() == 1)
+            {
+                updateModel(books,books_array);
+                showingSearch = false;
+            }
+
+            else
+            {
+                searchResult.remove(row);
+                books.removeRow(row);
+            }
+        }
+        else
+            books.removeRow(row);
+        
+        dlgDelete.setVisible(false);
+    }//GEN-LAST:event_btnConfirmDeleteActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        int row = tblListBooks.getSelectedRow();
+        if(row > -1)
+        {
+            DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
+            lblTitleD.setText((String)books.getValueAt(row, 1));
+            dlgDelete.setVisible(true);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "Seleccione un registro",
+                "Borrar", JOptionPane.INFORMATION_MESSAGE);
+        } 
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnCancelDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelDeleteActionPerformed
+        dlgDelete.setVisible(false);
+    }//GEN-LAST:event_btnCancelDeleteActionPerformed
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        try
+        {
+            if(tblListBooks.print(JTable.PrintMode.NORMAL, null, null))
+            {
+                JOptionPane.showMessageDialog(this, "Impresión exitosa",
+                "Imprimir", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Impresión cancelada",
+                "Imprimir", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (PrinterException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al intentar imprimir",JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnPrintActionPerformed
 
     private void btnEditRegistryActionPerformed(java.awt.event.ActionEvent evt)
     {
         int row = tblListBooks.getSelectedRow();
         if(row > -1)
         {
+            DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
             txtAuthorE.setText((String)books.getValueAt(row, 2));
             txtEditorialE.setText((String)books.getValueAt(row, 3));
             txtTitleE.setText((String)books.getValueAt(row, 1));
             txtYearPrintE.setText((String)books.getValueAt(row, 4));
+            tblListBooks.setModel(books);
             frmEditRegistry.setVisible(true);
         }
         else
@@ -626,16 +901,25 @@ public class Library extends javax.swing.JFrame
     {
         if(areFieldsFull() && isDataValid())
         {
-
+            DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
             Book book = BookControler.createBook(txtTitle.getText(), txtAuthor.getText(),
                     Integer.valueOf(txtYearPrint.getText()), txtEditorial.getText(),
                     Integer.valueOf(txtCopies.getText()), file.numberOfRecords());
 
-            addToTable(book);
             books_array.add(book);
             file.addRecord(book, file.numberOfRecords());
+            addToTable(book,books);
+            tblListBooks.setModel(books);
             frmNewBook.setVisible(false);
         }
+    }
+    
+    private void updateModel(DefaultTableModel model, ArrayList<Book> array)
+    {
+        model.setRowCount(0);
+        for(Book aux_book:array)
+            addToTable(aux_book, model);
+        tblListBooks.setModel(model);
     }
 
     public boolean isDataValid()
@@ -692,6 +976,24 @@ public class Library extends javax.swing.JFrame
                 return false;
             }
         }
+        else if(frmSearch.isVisible() && btnRdYear.isSelected() && !txtYearPrintS.getText().isEmpty())
+        {
+            try
+            {
+                int year = Integer.valueOf(txtYearPrintS.getText());
+                if(year <  0)
+                {
+                    txtYearPrintS.setText("");
+                    JOptionPane.showMessageDialog(frmSearch, "Años entre 0 y el actual" , "ERROR", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            } catch ( NumberFormatException e )
+            {
+                txtYearPrintE.setText("");
+                JOptionPane.showMessageDialog(frmSearch, "Año debe ser un valor entero" , "ERROR", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
 
         return true;
     }
@@ -718,16 +1020,29 @@ public class Library extends javax.swing.JFrame
                 return false;
             }
         }
+        
+        else if(frmSearch.isVisible())
+        {
+            if(txtYearPrintS.getText().isEmpty() && btnRdYear.isSelected() || 
+                txtAuthorS.getText().isEmpty() && btnRdAuthor.isSelected() ||
+                txtEditorialS.getText().isEmpty() && btnRdEditorial.isSelected() ||
+                txtTitleS.getText().isEmpty() && btnRdTitle.isSelected() ||
+                txtCodeS.getText().isEmpty() && btnRdCode.isSelected())
+            {
+                JOptionPane.showMessageDialog(frmSearch, "Debe escribir indicio de busqueda");
+                return false;
+            }
+        }
 
         return true;
     }
 
-    private void addToTable(Book book)
+    private void addToTable(Book book, DefaultTableModel model)
     {
         String[] newBook = {book.getCode(), book.getTitle(), book.getAuthor(),
             book.getEditorial(), Integer.toString(book.getYearPrint()),
             Integer.toString(book.getCopies()), Integer.toString(book.getAvailable())};
-        books.addRow(newBook);
+        model.addRow(newBook);
     }
 
     public static void main(String args[])
@@ -766,20 +1081,25 @@ public class Library extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelChanges;
+    private javax.swing.JButton btnCancelDelete;
     private javax.swing.JButton btnCancelNew;
     private javax.swing.JButton btnCancelSearch;
+    private javax.swing.JButton btnConfirmDelete;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEditRegistry;
     private javax.swing.JButton btnNewBook;
     private javax.swing.JButton btnNewSearch;
+    private javax.swing.JButton btnPrint;
     private javax.swing.JRadioButton btnRdAuthor;
     private javax.swing.JRadioButton btnRdCode;
     private javax.swing.JRadioButton btnRdEditorial;
     private javax.swing.JRadioButton btnRdTitle;
     private javax.swing.JRadioButton btnRdYear;
-    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSaveChanges;
     private javax.swing.JButton btnSearch;
+    private javax.swing.JButton btnShowAll;
+    private javax.swing.JDialog dlgDelete;
     private javax.swing.JFrame frmEditRegistry;
     private javax.swing.JFrame frmNewBook;
     private javax.swing.JFrame frmSearch;
@@ -794,7 +1114,10 @@ public class Library extends javax.swing.JFrame
     private javax.swing.JLabel lblEditorialS;
     private javax.swing.JLabel lblHeader;
     private javax.swing.JLabel lblInstSearch;
+    private javax.swing.JLabel lblMnsg1D;
+    private javax.swing.JLabel lblMnsg2D;
     private javax.swing.JLabel lblTitle;
+    private javax.swing.JLabel lblTitleD;
     private javax.swing.JLabel lblTitleE;
     private javax.swing.JLabel lblTitleS;
     private javax.swing.JLabel lblYearPrint;

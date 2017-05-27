@@ -14,19 +14,7 @@ public class Book
     public Book(){}
 
     public Book(String title, String author, String code,
-            int yearPrint, String editorial, int copies)
-    {
-        this.title = title;
-        this.author = author;
-        this.code = code;
-        this.yearPrint = yearPrint;
-        this.editorial = editorial;
-        this.copies = copies;
-        this.available = copies;
-    }
-    
-     public Book(String title, String author, String code,
-            int yearPrint, String editorial, int copies, int registryNumber)
+        int yearPrint, String editorial, int copies, int registryNumber)
     {
         this.title = title;
         this.author = author;
@@ -37,9 +25,9 @@ public class Book
         this.available = copies;
         this.registryNumber = registryNumber;
     }
-     
+
     public Book(String title, String author, String code,
-            int yearPrint, String editorial, int copies, int available, int registryNumber)
+        int yearPrint, String editorial, int copies, int available, int registryNumber)
     {
         this.title = title;
         this.author = author;
@@ -50,7 +38,7 @@ public class Book
         this.available = available;
         this.registryNumber = registryNumber;
     }
-
+    
     public String getTitle()
     {
         return title;

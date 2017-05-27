@@ -21,6 +21,15 @@ public class LibraryFile
         catch (FileNotFoundException ex)
         {Logger.getLogger(LibraryFile.class.getName()).log(Level.SEVERE, null, ex);}
     }
+    
+    public void delete()
+    {
+        try {
+            file.setLength(file.length() - RECORD_SIZE);
+        } catch (IOException ex) {
+            Logger.getLogger(LibraryFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void addRecord(Book book, int recordNum)
     {
