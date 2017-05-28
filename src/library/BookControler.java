@@ -55,6 +55,8 @@ public class BookControler
         }
         else
             code += title.charAt(0);
+        
+        code += Integer.toString(yearPrint);
 
         if (author.length() > 2) {
             for(int i = 0; i < 2; i++)
@@ -71,7 +73,6 @@ public class BookControler
         else
             code += editorial.charAt(0);
 
-        code += Integer.toString(yearPrint);
         code = code.toUpperCase();
 
         return new Book(title, author, code, yearPrint, editorial, copies, registryNumber);
