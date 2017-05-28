@@ -17,6 +17,7 @@ public class Library extends javax.swing.JFrame
     {
         initComponents();
         
+        setLocationRelativeTo(null);
         
         /*Crea el modelo para la tabla, books*/
         DefaultTableModel books = (DefaultTableModel) tblListBooks.getModel();
@@ -35,18 +36,22 @@ public class Library extends javax.swing.JFrame
 
         /*Estable las dimenciones del frame frmNewBook
         Evita que se pueda redimencionar*/
-        frmNewBook.setSize(355, 315);
+        frmNewBook.setSize(frmNewBook.getPreferredSize());
+        frmNewBook.setLocationRelativeTo(this);
         frmNewBook.setResizable(false);
 
         /*Estable las dimenciones del frame frmEditRegistry
         Evita que se pueda redimencionar*/
-        frmEditRegistry.setSize(355, 300);
+        frmEditRegistry.setSize(frmEditRegistry.getPreferredSize());
+        frmEditRegistry.setLocationRelativeTo(this);
         frmEditRegistry.setResizable(false);
         
-        frmSearch.setSize(410, 355);
+        frmSearch.setSize(frmSearch.getPreferredSize());
+        frmSearch.setLocationRelativeTo(this);
         frmSearch.setResizable(false);
         
         dlgDelete.setVisible(false);
+        dlgDelete.setLocationRelativeTo(this);
         dlgDelete.setSize(dlgDelete.getPreferredSize());
     }
 
@@ -120,9 +125,38 @@ public class Library extends javax.swing.JFrame
         lblCantCopies.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblCantCopies.setText("Cantidad de copias:");
 
+        txtEditorial.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEditorialKeyPressed(evt);
+            }
+        });
+
+        txtYearPrint.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtYearPrintKeyPressed(evt);
+            }
+        });
+
+        txtAuthor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtAuthorKeyPressed(evt);
+            }
+        });
+
         txtCopies.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCopiesActionPerformed(evt);
+            }
+        });
+        txtCopies.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCopiesKeyPressed(evt);
+            }
+        });
+
+        txtTitle.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtTitleKeyPressed(evt);
             }
         });
 
@@ -153,36 +187,32 @@ public class Library extends javax.swing.JFrame
         frmNewBookLayout.setHorizontalGroup(
             frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(frmNewBookLayout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addGroup(frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblTitle)
-                    .addComponent(lblAuthor)
-                    .addComponent(lblYearPrint)
-                    .addComponent(lblEditorial))
+                .addGap(13, 13, 13)
+                .addComponent(lblCantCopies)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(txtYearPrint, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(txtAuthor, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtTitle, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtEditorial))
-                .addGap(18, 18, 18))
+                .addComponent(txtCopies, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                .addGap(128, 128, 128))
             .addGroup(frmNewBookLayout.createSequentialGroup()
                 .addGroup(frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(frmNewBookLayout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(lblCantCopies))
-                    .addGroup(frmNewBookLayout.createSequentialGroup()
                         .addGap(43, 43, 43)
-                        .addComponent(btnCancelNew)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnCancelNew)
+                        .addGap(109, 109, 109)
+                        .addComponent(btnSave))
                     .addGroup(frmNewBookLayout.createSequentialGroup()
-                        .addGap(103, 103, 103)
-                        .addComponent(btnSave)
-                        .addGap(38, 38, 38))
-                    .addGroup(frmNewBookLayout.createSequentialGroup()
-                        .addComponent(txtCopies)
-                        .addGap(122, 122, 122))))
+                        .addGap(35, 35, 35)
+                        .addGroup(frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblTitle)
+                            .addComponent(lblAuthor)
+                            .addComponent(lblYearPrint)
+                            .addComponent(lblEditorial))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(txtYearPrint, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(txtAuthor, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTitle, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtEditorial))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         frmNewBookLayout.setVerticalGroup(
             frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,7 +241,7 @@ public class Library extends javax.swing.JFrame
                 .addGroup(frmNewBookLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelNew)
                     .addComponent(btnSave))
-                .addContainerGap())
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         frmEditRegistry.setTitle("Editar");
@@ -289,22 +319,128 @@ public class Library extends javax.swing.JFrame
                 .addGroup(frmEditRegistryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelChanges)
                     .addComponent(btnSaveChanges))
-                .addGap(24, 24, 24))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
+        frmSearch.setTitle("Buscar");
+        frmSearch.setType(java.awt.Window.Type.UTILITY);
+        frmSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                frmSearchMouseClicked(evt);
+            }
+        });
+
+        txtAuthorS.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtAuthorSFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAuthorSFocusLost(evt);
+            }
+        });
+        txtAuthorS.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtAuthorSKeyPressed(evt);
+            }
+        });
+
+        txtTitleS.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtTitleSFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtTitleSFocusLost(evt);
+            }
+        });
+        txtTitleS.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtTitleSKeyPressed(evt);
+            }
+        });
+
+        txtEditorialS.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtEditorialSFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEditorialSFocusLost(evt);
+            }
+        });
         txtEditorialS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEditorialSActionPerformed(evt);
             }
         });
+        txtEditorialS.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEditorialSKeyPressed(evt);
+            }
+        });
 
+        txtYearPrintS.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtYearPrintSFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtYearPrintSFocusLost(evt);
+            }
+        });
         txtYearPrintS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtYearPrintSActionPerformed(evt);
             }
         });
+        txtYearPrintS.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtYearPrintSKeyPressed(evt);
+            }
+        });
 
         lblInstSearch.setText("Selecciona los filtros de busqueda");
+
+        btnRdTitle.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                btnRdTitleStateChanged(evt);
+            }
+        });
+
+        btnRdCode.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                btnRdCodeStateChanged(evt);
+            }
+        });
+
+        txtCodeS.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtCodeSFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCodeSFocusLost(evt);
+            }
+        });
+        txtCodeS.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCodeSKeyPressed(evt);
+            }
+        });
+
+        btnRdAuthor.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                btnRdAuthorStateChanged(evt);
+            }
+        });
+
+        btnRdYear.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                btnRdYearStateChanged(evt);
+            }
+        });
+
+        btnRdEditorial.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                btnRdEditorialStateChanged(evt);
+            }
+        });
 
         lblCodeS.setText("Codigo");
 
@@ -366,10 +502,11 @@ public class Library extends javax.swing.JFrame
                                     .addComponent(txtYearPrintS, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtEditorialS, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(frmSearchLayout.createSequentialGroup()
-                                .addComponent(btnCancelSearch)
-                                .addGap(35, 35, 35)
+                                .addGap(31, 31, 31)
                                 .addComponent(btnShowAll)
-                                .addGap(26, 26, 26)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCancelSearch)
+                                .addGap(18, 18, 18)
                                 .addComponent(btnSearch)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -378,7 +515,7 @@ public class Library extends javax.swing.JFrame
                             .addComponent(btnRdAuthor)
                             .addComponent(btnRdEditorial)
                             .addComponent(btnRdYear))))
-                .addGap(8, 8, 8))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         frmSearchLayout.setVerticalGroup(
             frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -415,19 +552,19 @@ public class Library extends javax.swing.JFrame
                         .addComponent(lblEditorialS)))
                 .addGap(18, 18, 18)
                 .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnSearch)
-                    .addComponent(btnShowAll)
-                    .addComponent(btnCancelSearch))
-                .addGap(25, 25, 25))
+                    .addGroup(frmSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnSearch)
+                        .addComponent(btnCancelSearch))
+                    .addComponent(btnShowAll))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
 
-        dlgDelete.setTitle("BORRAR");
+        dlgDelete.setTitle("Eliminar");
         dlgDelete.setIconImage(null);
-        dlgDelete.setLocationByPlatform(true);
         dlgDelete.setResizable(false);
         dlgDelete.setType(java.awt.Window.Type.UTILITY);
 
-        lblMnsg1D.setText("¿Deseas borrar este libro?");
+        lblMnsg1D.setText("¿Deseas eliminar este libro?");
 
         lblMnsg2D.setText("Esta accion no puede deshacerse");
 
@@ -452,20 +589,22 @@ public class Library extends javax.swing.JFrame
         dlgDeleteLayout.setHorizontalGroup(
             dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dlgDeleteLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
                 .addGroup(dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lblMnsg2D, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(dlgDeleteLayout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(btnCancelDelete)
-                            .addGap(56, 56, 56)
-                            .addComponent(btnConfirmDelete)))
                     .addGroup(dlgDeleteLayout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(lblMnsg1D))
-                    .addComponent(lblTitleD, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(28, Short.MAX_VALUE))
+                        .addGap(29, 29, 29)
+                        .addGroup(dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lblMnsg2D, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(dlgDeleteLayout.createSequentialGroup()
+                                    .addGap(10, 10, 10)
+                                    .addComponent(btnCancelDelete)
+                                    .addGap(56, 56, 56)
+                                    .addComponent(btnConfirmDelete)))
+                            .addComponent(lblTitleD, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(dlgDeleteLayout.createSequentialGroup()
+                        .addGap(43, 43, 43)
+                        .addComponent(lblMnsg1D)))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         dlgDeleteLayout.setVerticalGroup(
             dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -480,7 +619,7 @@ public class Library extends javax.swing.JFrame
                 .addGroup(dlgDeleteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConfirmDelete)
                     .addComponent(btnCancelDelete))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -520,16 +659,9 @@ public class Library extends javax.swing.JFrame
         });
         jScrollPane2.setViewportView(tblListBooks);
         if (tblListBooks.getColumnModel().getColumnCount() > 0) {
-            tblListBooks.getColumnModel().getColumn(0).setResizable(false);
             tblListBooks.getColumnModel().getColumn(0).setPreferredWidth(60);
-            tblListBooks.getColumnModel().getColumn(1).setResizable(false);
-            tblListBooks.getColumnModel().getColumn(2).setResizable(false);
-            tblListBooks.getColumnModel().getColumn(3).setResizable(false);
-            tblListBooks.getColumnModel().getColumn(4).setResizable(false);
             tblListBooks.getColumnModel().getColumn(4).setPreferredWidth(60);
-            tblListBooks.getColumnModel().getColumn(5).setResizable(false);
             tblListBooks.getColumnModel().getColumn(5).setPreferredWidth(35);
-            tblListBooks.getColumnModel().getColumn(6).setResizable(false);
             tblListBooks.getColumnModel().getColumn(6).setPreferredWidth(40);
         }
 
@@ -565,16 +697,8 @@ public class Library extends javax.swing.JFrame
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(279, 279, 279)
-                .addComponent(lblHeader)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 651, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(347, Short.MAX_VALUE)
                 .addComponent(btnPrint)
                 .addGap(18, 18, 18)
                 .addComponent(btnDelete)
@@ -585,14 +709,22 @@ public class Library extends javax.swing.JFrame
                 .addGap(10, 10, 10)
                 .addComponent(btnNewBook)
                 .addGap(62, 62, 62))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(332, 332, 332)
+                .addComponent(lblHeader)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEditRegistry)
@@ -600,7 +732,7 @@ public class Library extends javax.swing.JFrame
                     .addComponent(btnNewSearch)
                     .addComponent(btnDelete)
                     .addComponent(btnPrint))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
@@ -756,6 +888,7 @@ public class Library extends javax.swing.JFrame
         txtTitleS.setText("");
         txtYearPrintS.setText("");
         frmSearch.setVisible(true);
+        frmSearch.requestFocus();
     }//GEN-LAST:event_btnNewSearchActionPerformed
 
     private void btnCancelSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelSearchActionPerformed
@@ -858,6 +991,169 @@ public class Library extends javax.swing.JFrame
         }
     }//GEN-LAST:event_btnPrintActionPerformed
 
+    private void txtCodeSFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodeSFocusGained
+        btnRdCode.setSelected(true);
+    }//GEN-LAST:event_txtCodeSFocusGained
+
+    private void btnRdCodeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_btnRdCodeStateChanged
+        if(btnRdCode.isSelected())
+            txtCodeS.requestFocus();
+        else
+            txtCodeS.setText("");
+    }//GEN-LAST:event_btnRdCodeStateChanged
+
+    private void txtTitleSFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTitleSFocusGained
+        btnRdTitle.setSelected(true);
+    }//GEN-LAST:event_txtTitleSFocusGained
+
+    private void txtAuthorSFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAuthorSFocusGained
+        btnRdAuthor.setSelected(true);
+    }//GEN-LAST:event_txtAuthorSFocusGained
+
+    private void txtYearPrintSFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtYearPrintSFocusGained
+        btnRdYear.setSelected(true);
+    }//GEN-LAST:event_txtYearPrintSFocusGained
+
+    private void txtEditorialSFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEditorialSFocusGained
+        btnRdEditorial.setSelected(true);
+    }//GEN-LAST:event_txtEditorialSFocusGained
+
+    private void btnRdTitleStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_btnRdTitleStateChanged
+        if(btnRdTitle.isSelected())
+            txtTitleS.requestFocus();
+        else
+            txtTitleS.setText("");
+    }//GEN-LAST:event_btnRdTitleStateChanged
+
+    private void btnRdAuthorStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_btnRdAuthorStateChanged
+        if(btnRdAuthor.isSelected())
+            txtAuthorS.requestFocus();
+        else
+            txtAuthorS.setText("");
+    }//GEN-LAST:event_btnRdAuthorStateChanged
+
+    private void btnRdYearStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_btnRdYearStateChanged
+        if(btnRdYear.isSelected())
+            txtYearPrintS.requestFocus();
+        else
+            txtYearPrintS.setText("");
+    }//GEN-LAST:event_btnRdYearStateChanged
+
+    private void btnRdEditorialStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_btnRdEditorialStateChanged
+        if(btnRdEditorial.isSelected())
+            txtEditorialS.requestFocus();
+        else
+            txtEditorialS.setText("");
+    }//GEN-LAST:event_btnRdEditorialStateChanged
+
+    private void txtCodeSKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodeSKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN ||
+                evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            txtTitleS.requestFocus();
+    }//GEN-LAST:event_txtCodeSKeyPressed
+
+    private void txtTitleSKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTitleSKeyPressed
+    if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN ||
+            evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            txtAuthorS.requestFocus();
+        
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
+            txtCodeS.requestFocus();
+    }//GEN-LAST:event_txtTitleSKeyPressed
+
+    private void txtAuthorSKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAuthorSKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN ||
+                evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            txtYearPrintS.requestFocus();
+        
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
+            txtTitleS.requestFocus();
+    }//GEN-LAST:event_txtAuthorSKeyPressed
+
+    private void txtEditorialSKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorialSKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnSearch.doClick();
+        
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
+            txtYearPrintS.requestFocus();
+    }//GEN-LAST:event_txtEditorialSKeyPressed
+
+    private void txtYearPrintSKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtYearPrintSKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN ||
+                evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            txtEditorialS.requestFocus();
+        
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
+            txtAuthorS.requestFocus();
+    }//GEN-LAST:event_txtYearPrintSKeyPressed
+
+    private void txtCodeSFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodeSFocusLost
+        if(txtCodeS.getText().isEmpty())
+            btnRdCode.setSelected(false);
+    }//GEN-LAST:event_txtCodeSFocusLost
+
+    private void txtTitleSFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTitleSFocusLost
+        if(txtTitleS.getText().isEmpty())
+            btnRdTitle.setSelected(false);
+    }//GEN-LAST:event_txtTitleSFocusLost
+
+    private void txtAuthorSFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAuthorSFocusLost
+        if(txtAuthorS.getText().isEmpty())
+            btnRdAuthor.setSelected(false);
+    }//GEN-LAST:event_txtAuthorSFocusLost
+
+    private void txtYearPrintSFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtYearPrintSFocusLost
+        if(txtYearPrintS.getText().isEmpty())
+            btnRdYear.setSelected(false);
+    }//GEN-LAST:event_txtYearPrintSFocusLost
+
+    private void txtEditorialSFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEditorialSFocusLost
+        if(txtEditorialS.getText().isEmpty())
+            btnRdEditorial.setSelected(false);
+    }//GEN-LAST:event_txtEditorialSFocusLost
+
+    private void frmSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_frmSearchMouseClicked
+        frmSearch.requestFocus();
+    }//GEN-LAST:event_frmSearchMouseClicked
+
+    private void txtTitleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTitleKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN ||
+                evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            txtAuthor.requestFocus();
+    }//GEN-LAST:event_txtTitleKeyPressed
+
+    private void txtAuthorKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAuthorKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN ||
+                evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            txtYearPrint.requestFocus();
+        
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
+            txtTitle.requestFocus();
+    }//GEN-LAST:event_txtAuthorKeyPressed
+
+    private void txtYearPrintKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtYearPrintKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN ||
+                evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            txtEditorial.requestFocus();
+        
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
+            txtAuthor.requestFocus();
+    }//GEN-LAST:event_txtYearPrintKeyPressed
+
+    private void txtEditorialKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorialKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN ||
+                evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            txtCopies.requestFocus();
+        
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
+            txtYearPrint.requestFocus();
+    }//GEN-LAST:event_txtEditorialKeyPressed
+
+    private void txtCopiesKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCopiesKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnSave.doClick();
+    }//GEN-LAST:event_txtCopiesKeyPressed
+
     private void btnEditRegistryActionPerformed(java.awt.event.ActionEvent evt)
     {
         int row = tblListBooks.getSelectedRow();
@@ -922,7 +1218,7 @@ public class Library extends javax.swing.JFrame
         tblListBooks.setModel(model);
     }
 
-    public boolean isDataValid()
+    private boolean isDataValid()
     {
         if(frmNewBook.isVisible())
         {
@@ -998,7 +1294,7 @@ public class Library extends javax.swing.JFrame
         return true;
     }
 
-    public boolean areFieldsFull()
+    private boolean areFieldsFull()
     {
         if(frmNewBook.isVisible())
         {
@@ -1054,7 +1350,7 @@ public class Library extends javax.swing.JFrame
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
