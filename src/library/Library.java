@@ -2,6 +2,7 @@ package library;
 
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -12,6 +13,12 @@ public class Library extends javax.swing.JFrame
     private LibraryFile file;
     private ArrayList<Book> searchResult = new ArrayList();
     private boolean showingSearch;
+    private LibraryUserFile usersFile;
+    private ArrayList<LibraryUser> users_array;
+    private ArrayList<LibraryUser> searchUsers;
+    private boolean showingUserSearch;
+    private CountersFile counters;
+    private long usersIDCount;
 
     public Library()
     {
@@ -33,6 +40,22 @@ public class Library extends javax.swing.JFrame
             addToTable(book, books);
         }
         showingSearch = false;
+        
+        usersFile = new LibraryUserFile("Users");
+        users_array = usersFile.readAll();
+     /*   
+        DefaultListModel users = new DefaultListModel();
+        for(LibraryUser user:users_array)
+            users.addElement(user);
+        lstUsers.setModel(users);
+        */
+        showingUserSearch = false;
+        
+        counters = new CountersFile();
+        if(counters.readUsers() == -1)
+            usersIDCount = 0;
+        else
+            usersIDCount = counters.readUsers();
 
         /*Estable las dimenciones del frame frmNewBook
         Evita que se pueda redimencionar*/
@@ -50,9 +73,25 @@ public class Library extends javax.swing.JFrame
         frmSearch.setLocationRelativeTo(this);
         frmSearch.setResizable(false);
         
-        dlgDelete.setVisible(false);
+        dlgDelete.setResizable(false);
         dlgDelete.setLocationRelativeTo(this);
         dlgDelete.setSize(dlgDelete.getPreferredSize());
+                
+        frmSeeDetails.setResizable(false);
+        frmSeeDetails.setLocation(getX()/2,getY()/2);
+        frmSeeDetails.setSize(frmSeeDetails.getPreferredSize());
+        
+        frmUsers.setResizable(false);
+        frmUsers.setLocationRelativeTo(null);
+        frmUsers.setSize(frmUsers.getPreferredSize());
+        
+        frmNewUser.setResizable(false);
+        frmNewUser.setLocationRelativeTo(frmUsers);
+        frmNewUser.setSize(frmNewUser.getPreferredSize());
+        
+        frmUserDetails.setResizable(false);
+        frmUserDetails.setLocationRelativeTo(frmUsers);
+        frmUserDetails.setSize(frmUserDetails.getPreferredSize());
     }
 
     @SuppressWarnings("unchecked")
@@ -109,14 +148,60 @@ public class Library extends javax.swing.JFrame
         btnConfirmDelete = new javax.swing.JButton();
         btnCancelDelete = new javax.swing.JButton();
         lblTitleD = new javax.swing.JLabel();
+        frmSeeDetails = new javax.swing.JFrame();
+        txtAuthorSD = new javax.swing.JTextField();
+        txtTitleSD = new javax.swing.JTextField();
+        lblEditorialSD = new javax.swing.JLabel();
+        lblTitleSD = new javax.swing.JLabel();
+        lblYearPrintSD = new javax.swing.JLabel();
+        lblAuthorSD = new javax.swing.JLabel();
+        txtEditorialSD = new javax.swing.JTextField();
+        txtYearPrintSD = new javax.swing.JTextField();
+        lblCodeSD = new javax.swing.JLabel();
+        txtCodeSD = new javax.swing.JTextField();
+        lblCopiesSD = new javax.swing.JLabel();
+        lblAvailableSD = new javax.swing.JLabel();
+        txtAvailableSD = new javax.swing.JTextField();
+        txtCopiesSD = new javax.swing.JTextField();
+        btnDelete = new javax.swing.JButton();
+        btnEditRegistry = new javax.swing.JButton();
+        frmUsers = new javax.swing.JFrame();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        lstUsers = new javax.swing.JList<>();
+        lblUsersHeader = new javax.swing.JLabel();
+        btnNewUser = new javax.swing.JButton();
+        btnSearchUser = new javax.swing.JButton();
+        btnSeeUserDetails = new javax.swing.JButton();
+        frmNewUser = new javax.swing.JFrame();
+        txtUserNameN = new javax.swing.JTextField();
+        lblAgeN = new javax.swing.JLabel();
+        txtAgeN = new javax.swing.JTextField();
+        lblSchool = new javax.swing.JLabel();
+        txtSchoolN = new javax.swing.JTextField();
+        btnSaveNewUser = new javax.swing.JButton();
+        btnCancelNewUser = new javax.swing.JButton();
+        lblHeaderNewUser = new javax.swing.JLabel();
+        lblUserNameN = new javax.swing.JLabel();
+        frmUserDetails = new javax.swing.JFrame();
+        txtUserNameUD = new javax.swing.JTextField();
+        lblAgeUD = new javax.swing.JLabel();
+        txtAgeUD = new javax.swing.JTextField();
+        lblSchoolUD = new javax.swing.JLabel();
+        txtSchoolUD = new javax.swing.JTextField();
+        lblUserNameUD = new javax.swing.JLabel();
+        lblUserIDUD = new javax.swing.JLabel();
+        txtUserIDUD = new javax.swing.JTextField();
+        btnDeleteUser = new javax.swing.JButton();
+        btnEditUser = new javax.swing.JButton();
+        btnCloseUserDetails = new javax.swing.JButton();
         lblHeader = new javax.swing.JLabel();
         btnNewBook = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblListBooks = new javax.swing.JTable();
-        btnEditRegistry = new javax.swing.JButton();
         btnNewSearch = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
         btnPrint = new javax.swing.JButton();
+        btnSeeDetails = new javax.swing.JButton();
+        btnUsers = new javax.swing.JButton();
 
         frmNewBook.setTitle("Nuevo");
         frmNewBook.setResizable(false);
@@ -622,7 +707,356 @@ public class Library extends javax.swing.JFrame
                 .addContainerGap(60, Short.MAX_VALUE))
         );
 
+        frmSeeDetails.setResizable(false);
+        frmSeeDetails.setType(java.awt.Window.Type.UTILITY);
+
+        txtAuthorSD.setEditable(false);
+
+        txtTitleSD.setEditable(false);
+
+        lblEditorialSD.setText("Editorial:");
+
+        lblTitleSD.setText("Título:");
+
+        lblYearPrintSD.setText("Año Impresion:");
+
+        lblAuthorSD.setText("Autor:");
+
+        txtEditorialSD.setEditable(false);
+
+        txtYearPrintSD.setEditable(false);
+
+        lblCodeSD.setText("Código:");
+
+        txtCodeSD.setEditable(false);
+
+        lblCopiesSD.setText("Copias:");
+
+        lblAvailableSD.setText("Disponibles:");
+
+        txtAvailableSD.setEditable(false);
+
+        txtCopiesSD.setEditable(false);
+
+        btnDelete.setText("Eliminar");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+
+        btnEditRegistry.setText("Editar");
+        btnEditRegistry.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditRegistryActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout frmSeeDetailsLayout = new javax.swing.GroupLayout(frmSeeDetails.getContentPane());
+        frmSeeDetails.getContentPane().setLayout(frmSeeDetailsLayout);
+        frmSeeDetailsLayout.setHorizontalGroup(
+            frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(frmSeeDetailsLayout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(frmSeeDetailsLayout.createSequentialGroup()
+                        .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblCopiesSD)
+                            .addComponent(lblCodeSD)
+                            .addComponent(lblTitleSD)
+                            .addComponent(lblAuthorSD)
+                            .addComponent(lblYearPrintSD)
+                            .addComponent(lblEditorialSD))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtYearPrintSD)
+                            .addComponent(txtAuthorSD)
+                            .addComponent(txtTitleSD)
+                            .addComponent(txtEditorialSD, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(txtCodeSD, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(frmSeeDetailsLayout.createSequentialGroup()
+                                .addComponent(txtCopiesSD)
+                                .addGap(15, 15, 15)
+                                .addComponent(lblAvailableSD)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtAvailableSD))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, frmSeeDetailsLayout.createSequentialGroup()
+                        .addComponent(btnDelete)
+                        .addGap(28, 28, 28)
+                        .addComponent(btnEditRegistry)))
+                .addContainerGap(42, Short.MAX_VALUE))
+        );
+        frmSeeDetailsLayout.setVerticalGroup(
+            frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(frmSeeDetailsLayout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCodeSD)
+                    .addComponent(txtCodeSD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTitleSD)
+                    .addComponent(txtTitleSD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblAuthorSD)
+                    .addComponent(txtAuthorSD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblYearPrintSD)
+                    .addComponent(txtYearPrintSD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEditorialSD)
+                    .addComponent(txtEditorialSD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCopiesSD)
+                    .addComponent(lblAvailableSD)
+                    .addComponent(txtAvailableSD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCopiesSD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addGroup(frmSeeDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEditRegistry)
+                    .addComponent(btnDelete))
+                .addContainerGap(67, Short.MAX_VALUE))
+        );
+
+        frmUsers.setTitle("Usuarios");
+        frmUsers.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                frmUsersComponentHidden(evt);
+            }
+        });
+
+        lstUsers.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(lstUsers);
+
+        lblUsersHeader.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblUsersHeader.setText("Usuarios de Biblioteca");
+
+        btnNewUser.setText("Nuevo");
+        btnNewUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewUserActionPerformed(evt);
+            }
+        });
+
+        btnSearchUser.setText("Buscar");
+
+        btnSeeUserDetails.setText("Ver Detalles");
+        btnSeeUserDetails.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSeeUserDetailsActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout frmUsersLayout = new javax.swing.GroupLayout(frmUsers.getContentPane());
+        frmUsers.getContentPane().setLayout(frmUsersLayout);
+        frmUsersLayout.setHorizontalGroup(
+            frmUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(frmUsersLayout.createSequentialGroup()
+                .addGroup(frmUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(frmUsersLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSeeUserDetails)
+                        .addGap(29, 29, 29)
+                        .addComponent(btnSearchUser)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnNewUser))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, frmUsersLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addGroup(frmUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUsersHeader))))
+                .addContainerGap(42, Short.MAX_VALUE))
+        );
+        frmUsersLayout.setVerticalGroup(
+            frmUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, frmUsersLayout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(lblUsersHeader)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(frmUsersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNewUser)
+                    .addComponent(btnSearchUser)
+                    .addComponent(btnSeeUserDetails))
+                .addContainerGap(56, Short.MAX_VALUE))
+        );
+
+        frmNewUser.setTitle("Nuevo Usuario");
+        frmNewUser.setType(java.awt.Window.Type.UTILITY);
+
+        lblAgeN.setText("Edad:");
+
+        lblSchool.setText("Escuela:");
+
+        btnSaveNewUser.setText("Guardar");
+        btnSaveNewUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveNewUserActionPerformed(evt);
+            }
+        });
+
+        btnCancelNewUser.setText("Cancelar");
+        btnCancelNewUser.setName(""); // NOI18N
+        btnCancelNewUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelNewUserActionPerformed(evt);
+            }
+        });
+
+        lblHeaderNewUser.setText("Nuevo Usuario");
+
+        lblUserNameN.setText("Nombre:");
+
+        javax.swing.GroupLayout frmNewUserLayout = new javax.swing.GroupLayout(frmNewUser.getContentPane());
+        frmNewUser.getContentPane().setLayout(frmNewUserLayout);
+        frmNewUserLayout.setHorizontalGroup(
+            frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(frmNewUserLayout.createSequentialGroup()
+                .addGroup(frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(frmNewUserLayout.createSequentialGroup()
+                        .addGap(131, 131, 131)
+                        .addComponent(lblHeaderNewUser))
+                    .addGroup(frmNewUserLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addGroup(frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnSaveNewUser)
+                            .addGroup(frmNewUserLayout.createSequentialGroup()
+                                .addGroup(frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(lblAgeN)
+                                    .addComponent(lblUserNameN)
+                                    .addComponent(lblSchool))
+                                .addGap(18, 18, 18)
+                                .addGroup(frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtUserNameN, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtAgeN, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtSchoolN, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, frmNewUserLayout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addComponent(btnCancelNewUser)))))
+                .addContainerGap(33, Short.MAX_VALUE))
+        );
+        frmNewUserLayout.setVerticalGroup(
+            frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(frmNewUserLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblHeaderNewUser)
+                .addGap(18, 18, 18)
+                .addGroup(frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblUserNameN)
+                    .addComponent(txtUserNameN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblAgeN)
+                    .addComponent(txtAgeN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblSchool)
+                    .addComponent(txtSchoolN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(frmNewUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSaveNewUser)
+                    .addComponent(btnCancelNewUser))
+                .addContainerGap(40, Short.MAX_VALUE))
+        );
+
+        frmUserDetails.setType(java.awt.Window.Type.UTILITY);
+
+        txtUserNameUD.setEditable(false);
+
+        lblAgeUD.setText("Edad:");
+
+        txtAgeUD.setEditable(false);
+
+        lblSchoolUD.setText("Escuela:");
+
+        txtSchoolUD.setEditable(false);
+
+        lblUserNameUD.setText("Nombre:");
+
+        lblUserIDUD.setText("ID:");
+
+        txtUserIDUD.setEditable(false);
+
+        btnDeleteUser.setText("Eliminar");
+
+        btnEditUser.setText("Editar");
+
+        btnCloseUserDetails.setText("Cerrar");
+        btnCloseUserDetails.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseUserDetailsActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout frmUserDetailsLayout = new javax.swing.GroupLayout(frmUserDetails.getContentPane());
+        frmUserDetails.getContentPane().setLayout(frmUserDetailsLayout);
+        frmUserDetailsLayout.setHorizontalGroup(
+            frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(frmUserDetailsLayout.createSequentialGroup()
+                .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(frmUserDetailsLayout.createSequentialGroup()
+                        .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, frmUserDetailsLayout.createSequentialGroup()
+                                .addComponent(btnEditUser)
+                                .addGap(32, 32, 32))
+                            .addGroup(frmUserDetailsLayout.createSequentialGroup()
+                                .addGap(23, 23, 23)
+                                .addComponent(btnCloseUserDetails)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnDeleteUser))
+                    .addGroup(frmUserDetailsLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblUserIDUD)
+                            .addComponent(lblAgeUD)
+                            .addComponent(lblUserNameUD)
+                            .addComponent(lblSchoolUD))
+                        .addGap(18, 18, 18)
+                        .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtUserNameUD, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtAgeUD, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSchoolUD, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtUserIDUD, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(45, Short.MAX_VALUE))
+        );
+        frmUserDetailsLayout.setVerticalGroup(
+            frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(frmUserDetailsLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblUserIDUD)
+                    .addComponent(txtUserIDUD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblUserNameUD)
+                    .addComponent(txtUserNameUD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblAgeUD)
+                    .addComponent(txtAgeUD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblSchoolUD)
+                    .addComponent(txtSchoolUD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(frmUserDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEditUser)
+                    .addComponent(btnCloseUserDetails)
+                    .addComponent(btnDeleteUser))
+                .addContainerGap(45, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Biblioteca");
 
         lblHeader.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblHeader.setText("BIBLIOTECA");
@@ -659,30 +1093,16 @@ public class Library extends javax.swing.JFrame
         });
         jScrollPane2.setViewportView(tblListBooks);
         if (tblListBooks.getColumnModel().getColumnCount() > 0) {
-            tblListBooks.getColumnModel().getColumn(0).setPreferredWidth(60);
-            tblListBooks.getColumnModel().getColumn(4).setPreferredWidth(60);
-            tblListBooks.getColumnModel().getColumn(5).setPreferredWidth(35);
-            tblListBooks.getColumnModel().getColumn(6).setPreferredWidth(40);
+            tblListBooks.getColumnModel().getColumn(0).setPreferredWidth(50);
+            tblListBooks.getColumnModel().getColumn(4).setPreferredWidth(50);
+            tblListBooks.getColumnModel().getColumn(5).setPreferredWidth(25);
+            tblListBooks.getColumnModel().getColumn(6).setPreferredWidth(35);
         }
-
-        btnEditRegistry.setText("Editar");
-        btnEditRegistry.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditRegistryActionPerformed(evt);
-            }
-        });
 
         btnNewSearch.setText("Buscar");
         btnNewSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNewSearchActionPerformed(evt);
-            }
-        });
-
-        btnDelete.setText("Borrar");
-        btnDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
             }
         });
 
@@ -693,46 +1113,60 @@ public class Library extends javax.swing.JFrame
             }
         });
 
+        btnSeeDetails.setText("Detalles");
+        btnSeeDetails.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSeeDetailsActionPerformed(evt);
+            }
+        });
+
+        btnUsers.setText("Usuarios");
+        btnUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUsersActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(347, Short.MAX_VALUE)
-                .addComponent(btnPrint)
-                .addGap(18, 18, 18)
-                .addComponent(btnDelete)
-                .addGap(18, 18, 18)
-                .addComponent(btnNewSearch)
-                .addGap(18, 18, 18)
-                .addComponent(btnEditRegistry)
-                .addGap(10, 10, 10)
-                .addComponent(btnNewBook)
-                .addGap(62, 62, 62))
             .addGroup(layout.createSequentialGroup()
-                .addGap(332, 332, 332)
-                .addComponent(lblHeader)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 738, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnUsers)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnPrint)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSeeDetails)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnNewSearch)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnNewBook))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(339, 339, 339)
+                        .addComponent(lblHeader)))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(21, 21, 21)
                 .addComponent(lblHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEditRegistry)
                     .addComponent(btnNewBook)
                     .addComponent(btnNewSearch)
-                    .addComponent(btnDelete)
-                    .addComponent(btnPrint))
-                .addContainerGap(26, Short.MAX_VALUE))
+                    .addComponent(btnPrint)
+                    .addComponent(btnSeeDetails)
+                    .addComponent(btnUsers))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
@@ -779,6 +1213,7 @@ public class Library extends javax.swing.JFrame
             tblListBooks.setModel(books);
             
             frmEditRegistry.setVisible(false);
+            frmSeeDetails.setVisible(false);
         }
     }//GEN-LAST:event_btnSaveChangesActionPerformed
 
@@ -952,21 +1387,15 @@ public class Library extends javax.swing.JFrame
             books.removeRow(row);
         
         dlgDelete.setVisible(false);
+        frmSeeDetails.setVisible(false);
     }//GEN-LAST:event_btnConfirmDeleteActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         int row = tblListBooks.getSelectedRow();
-        if(row > -1)
-        {
-            DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
-            lblTitleD.setText((String)books.getValueAt(row, 1));
-            dlgDelete.setVisible(true);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(this, "Seleccione un registro",
-                "Borrar", JOptionPane.INFORMATION_MESSAGE);
-        } 
+        
+        DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
+        lblTitleD.setText((String)books.getValueAt(row, 1));
+        dlgDelete.setVisible(true);
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnCancelDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelDeleteActionPerformed
@@ -1154,25 +1583,132 @@ public class Library extends javax.swing.JFrame
             btnSave.doClick();
     }//GEN-LAST:event_txtCopiesKeyPressed
 
-    private void btnEditRegistryActionPerformed(java.awt.event.ActionEvent evt)
-    {
+    private void btnSeeDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeeDetailsActionPerformed
         int row = tblListBooks.getSelectedRow();
         if(row > -1)
         {
+            Book book = null;
             DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
-            txtAuthorE.setText((String)books.getValueAt(row, 2));
-            txtEditorialE.setText((String)books.getValueAt(row, 3));
-            txtTitleE.setText((String)books.getValueAt(row, 1));
-            txtYearPrintE.setText((String)books.getValueAt(row, 4));
-            tblListBooks.setModel(books);
-            frmEditRegistry.setVisible(true);
+            
+            for(Book aux_book:books_array)
+            {
+                if(aux_book.getAuthor().equalsIgnoreCase((String)books.getValueAt(row, 2))&&
+                   aux_book.getEditorial().equalsIgnoreCase((String)books.getValueAt(row, 3))&&
+                   aux_book.getTitle().equalsIgnoreCase((String)books.getValueAt(row, 1))&&
+                   aux_book.getYearPrint()==Integer.valueOf((String)books.getValueAt(row, 4))&&
+                   aux_book.getCode().equalsIgnoreCase((String)books.getValueAt(row, 0)))
+                {
+                    book = aux_book;
+                    break;
+                }
+            }
+            
+            txtCodeSD.setText(book.getCode());
+            txtTitleSD.setText(book.getTitle());
+            txtAuthorSD.setText(book.getAuthor());
+            txtEditorialSD.setText(book.getEditorial());
+            txtYearPrintSD.setText(Integer.toString(book.getYearPrint()));
+            txtCopiesSD.setText(Integer.toString(book.getCopies()));
+            txtAvailableSD.setText(Integer.toString(book.getAvailable()));
+            
+            frmSeeDetails.setTitle(book.getTitle());
+            frmSeeDetails.setVisible(true);
         }
         else
         {
            JOptionPane.showMessageDialog(this, "Seleccione un registro",
-                "Editar", JOptionPane.INFORMATION_MESSAGE);
+                "Ver Detalles", JOptionPane.INFORMATION_MESSAGE);
 
         }
+    }//GEN-LAST:event_btnSeeDetailsActionPerformed
+
+    private void btnNewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewUserActionPerformed
+        txtUserNameN.setText("");
+        txtAgeN.setText("");
+        txtSchoolN.setText("");
+        frmNewUser.setVisible(true);
+        txtUserNameN.requestFocus();
+    }//GEN-LAST:event_btnNewUserActionPerformed
+
+    private void btnUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsersActionPerformed
+        DefaultListModel users = new DefaultListModel();
+
+        for(LibraryUser user:users_array)
+        {
+            users.addElement(user);
+        }
+
+        lstUsers.setModel(users);
+        this.setVisible(false);
+        frmUsers.setVisible(true);
+    }//GEN-LAST:event_btnUsersActionPerformed
+
+    private void btnSaveNewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveNewUserActionPerformed
+         if(areFieldsFull() && isDataValid())
+        {
+            DefaultListModel users = (DefaultListModel) lstUsers.getModel();
+            
+            LibraryUser user = UserControler.createUser(txtUserNameN.getText(),
+                Integer.valueOf(txtAgeN.getText()), txtSchoolN.getText(),
+                usersFile.numberOfRecords(), usersIDCount);
+            
+            usersIDCount++;
+            counters.writeUsers(usersIDCount);
+
+            users_array.add(user);
+            usersFile.addRecord(user, usersFile.numberOfRecords());
+            users.addElement(user);
+            lstUsers.setModel(users);
+            frmNewUser.setVisible(false);
+        }
+    }//GEN-LAST:event_btnSaveNewUserActionPerformed
+
+    private void frmUsersComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_frmUsersComponentHidden
+        this.setVisible(true);
+    }//GEN-LAST:event_frmUsersComponentHidden
+
+    private void btnCancelNewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelNewUserActionPerformed
+        frmNewUser.setVisible(false);
+    }//GEN-LAST:event_btnCancelNewUserActionPerformed
+
+    private void btnSeeUserDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeeUserDetailsActionPerformed
+        int selection = lstUsers.getSelectedIndex();
+        if(selection > -1)
+        {
+            DefaultListModel users = (DefaultListModel) lstUsers.getModel();
+            
+            LibraryUser user = (LibraryUser) users.get(selection);
+            
+            txtAgeUD.setText(Integer.toString(user.getAge()));
+            txtUserNameUD.setText(user.getUserName());
+            txtUserIDUD.setText(user.getLibraryID());
+            txtSchoolUD.setText(user.getSchool());
+            
+            frmUserDetails.setTitle(user.getUserName());
+            frmUserDetails.setVisible(true);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(frmUsers, "Seleccione un registro",
+                "Ver Detalles", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnSeeUserDetailsActionPerformed
+
+    private void btnCloseUserDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseUserDetailsActionPerformed
+        frmUserDetails.setVisible(false);
+    }//GEN-LAST:event_btnCloseUserDetailsActionPerformed
+
+    private void btnEditRegistryActionPerformed(java.awt.event.ActionEvent evt)
+    {
+        int row = tblListBooks.getSelectedRow();
+
+        DefaultTableModel books = (DefaultTableModel)tblListBooks.getModel();
+        txtAuthorE.setText((String)books.getValueAt(row, 2));
+        txtEditorialE.setText((String)books.getValueAt(row, 3));
+        txtTitleE.setText((String)books.getValueAt(row, 1));
+        txtYearPrintE.setText((String)books.getValueAt(row, 4));
+        tblListBooks.setModel(books);
+        frmEditRegistry.setVisible(true);
     }
 
     private void btnCancelNewActionPerformed(java.awt.event.ActionEvent evt)
@@ -1217,7 +1753,7 @@ public class Library extends javax.swing.JFrame
             addToTable(aux_book, model);
         tblListBooks.setModel(model);
     }
-
+    
     private boolean isDataValid()
     {
         if(frmNewBook.isVisible())
@@ -1225,10 +1761,10 @@ public class Library extends javax.swing.JFrame
             try
             {
                 int year = Integer.valueOf(txtYearPrint.getText());
-                if(year <  0)
+                if(year <  1000)
                 {
                     txtYearPrint.setText("");
-                    JOptionPane.showMessageDialog(frmNewBook, "Años entre 0 y el actual" , "ERROR", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frmNewBook, "Años entre 1000 y el actual" , "ERROR", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             } catch ( NumberFormatException e )
@@ -1240,8 +1776,8 @@ public class Library extends javax.swing.JFrame
 
             try
             {
-                int copias = Integer.valueOf(txtCopies.getText());
-                if(copias < 0)
+                int copies = Integer.valueOf(txtCopies.getText());
+                if(copies < 0)
                 {
                     txtCopies.setText("");
                     JOptionPane.showMessageDialog(frmNewBook, "Copias debe ser positivo", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -1259,10 +1795,10 @@ public class Library extends javax.swing.JFrame
             try
             {
                 int year = Integer.valueOf(txtYearPrintE.getText());
-                if(year <  0)
+                if(year <  1000)
                 {
                     txtYearPrintE.setText("");
-                    JOptionPane.showMessageDialog(frmEditRegistry, "Años entre 0 y el actual" , "ERROR", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frmEditRegistry, "Años entre 1000 y el actual" , "ERROR", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             } catch ( NumberFormatException e )
@@ -1277,16 +1813,34 @@ public class Library extends javax.swing.JFrame
             try
             {
                 int year = Integer.valueOf(txtYearPrintS.getText());
-                if(year <  0)
+                if(year <  1000)
                 {
                     txtYearPrintS.setText("");
-                    JOptionPane.showMessageDialog(frmSearch, "Años entre 0 y el actual" , "ERROR", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frmSearch, "Años entre 1000 y el actual" , "ERROR", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             } catch ( NumberFormatException e )
             {
                 txtYearPrintE.setText("");
                 JOptionPane.showMessageDialog(frmSearch, "Año debe ser un valor entero" , "ERROR", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        else if(frmNewUser.isVisible())
+        {
+            try
+            {
+                int age = Integer.valueOf(txtAgeN.getText());
+                if(age < 0)
+                {
+                    txtAgeN.setText("");
+                    JOptionPane.showMessageDialog(frmNewUser, "Edad debe ser positivo", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            } catch ( NumberFormatException e )
+            {
+                txtAgeN.setText("");
+                JOptionPane.showMessageDialog(frmNewUser, "Edad debe ser un valor entero", "ERROR", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
@@ -1325,10 +1879,19 @@ public class Library extends javax.swing.JFrame
                 txtTitleS.getText().isEmpty() && btnRdTitle.isSelected() ||
                 txtCodeS.getText().isEmpty() && btnRdCode.isSelected())
             {
-                JOptionPane.showMessageDialog(frmSearch, "Debe escribir indicio de busqueda");
-                return false;
+                
             }
         }
+        else if(frmNewUser.isVisible())
+        {
+            if(txtUserNameN.getText().isEmpty() ||
+                txtAgeN.getText().isEmpty() ||
+                txtSchoolN.getText().isEmpty())
+            {
+                JOptionPane.showMessageDialog(frmSearch, "Debe llenar todos los campos");
+                return false;
+            }
+        }   
 
         return true;
     }
@@ -1379,12 +1942,17 @@ public class Library extends javax.swing.JFrame
     private javax.swing.JButton btnCancelChanges;
     private javax.swing.JButton btnCancelDelete;
     private javax.swing.JButton btnCancelNew;
+    private javax.swing.JButton btnCancelNewUser;
     private javax.swing.JButton btnCancelSearch;
+    private javax.swing.JButton btnCloseUserDetails;
     private javax.swing.JButton btnConfirmDelete;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDeleteUser;
     private javax.swing.JButton btnEditRegistry;
+    private javax.swing.JButton btnEditUser;
     private javax.swing.JButton btnNewBook;
     private javax.swing.JButton btnNewSearch;
+    private javax.swing.JButton btnNewUser;
     private javax.swing.JButton btnPrint;
     private javax.swing.JRadioButton btnRdAuthor;
     private javax.swing.JRadioButton btnRdCode;
@@ -1393,46 +1961,87 @@ public class Library extends javax.swing.JFrame
     private javax.swing.JRadioButton btnRdYear;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSaveChanges;
+    private javax.swing.JButton btnSaveNewUser;
     private javax.swing.JButton btnSearch;
+    private javax.swing.JButton btnSearchUser;
+    private javax.swing.JButton btnSeeDetails;
+    private javax.swing.JButton btnSeeUserDetails;
     private javax.swing.JButton btnShowAll;
+    private javax.swing.JButton btnUsers;
     private javax.swing.JDialog dlgDelete;
     private javax.swing.JFrame frmEditRegistry;
     private javax.swing.JFrame frmNewBook;
+    private javax.swing.JFrame frmNewUser;
     private javax.swing.JFrame frmSearch;
+    private javax.swing.JFrame frmSeeDetails;
+    private javax.swing.JFrame frmUserDetails;
+    private javax.swing.JFrame frmUsers;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblAgeN;
+    private javax.swing.JLabel lblAgeUD;
     private javax.swing.JLabel lblAuthor;
     private javax.swing.JLabel lblAuthorE;
     private javax.swing.JLabel lblAuthorS;
+    private javax.swing.JLabel lblAuthorSD;
+    private javax.swing.JLabel lblAvailableSD;
     private javax.swing.JLabel lblCantCopies;
     private javax.swing.JLabel lblCodeS;
+    private javax.swing.JLabel lblCodeSD;
+    private javax.swing.JLabel lblCopiesSD;
     private javax.swing.JLabel lblEditorial;
     private javax.swing.JLabel lblEditorialE;
     private javax.swing.JLabel lblEditorialS;
+    private javax.swing.JLabel lblEditorialSD;
     private javax.swing.JLabel lblHeader;
+    private javax.swing.JLabel lblHeaderNewUser;
     private javax.swing.JLabel lblInstSearch;
     private javax.swing.JLabel lblMnsg1D;
     private javax.swing.JLabel lblMnsg2D;
+    private javax.swing.JLabel lblSchool;
+    private javax.swing.JLabel lblSchoolUD;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblTitleD;
     private javax.swing.JLabel lblTitleE;
     private javax.swing.JLabel lblTitleS;
+    private javax.swing.JLabel lblTitleSD;
+    private javax.swing.JLabel lblUserIDUD;
+    private javax.swing.JLabel lblUserNameN;
+    private javax.swing.JLabel lblUserNameUD;
+    private javax.swing.JLabel lblUsersHeader;
     private javax.swing.JLabel lblYearPrint;
     private javax.swing.JLabel lblYearPrintE;
+    private javax.swing.JLabel lblYearPrintSD;
     private javax.swing.JLabel lblYearS;
+    private javax.swing.JList<String> lstUsers;
     private javax.swing.JTable tblListBooks;
+    private javax.swing.JTextField txtAgeN;
+    private javax.swing.JTextField txtAgeUD;
     private javax.swing.JTextField txtAuthor;
     private javax.swing.JTextField txtAuthorE;
     private javax.swing.JTextField txtAuthorS;
+    private javax.swing.JTextField txtAuthorSD;
+    private javax.swing.JTextField txtAvailableSD;
     private javax.swing.JTextField txtCodeS;
+    private javax.swing.JTextField txtCodeSD;
     private javax.swing.JTextField txtCopies;
+    private javax.swing.JTextField txtCopiesSD;
     private javax.swing.JTextField txtEditorial;
     private javax.swing.JTextField txtEditorialE;
     private javax.swing.JTextField txtEditorialS;
+    private javax.swing.JTextField txtEditorialSD;
+    private javax.swing.JTextField txtSchoolN;
+    private javax.swing.JTextField txtSchoolUD;
     private javax.swing.JTextField txtTitle;
     private javax.swing.JTextField txtTitleE;
     private javax.swing.JTextField txtTitleS;
+    private javax.swing.JTextField txtTitleSD;
+    private javax.swing.JTextField txtUserIDUD;
+    private javax.swing.JTextField txtUserNameN;
+    private javax.swing.JTextField txtUserNameUD;
     private javax.swing.JTextField txtYearPrint;
     private javax.swing.JTextField txtYearPrintE;
     private javax.swing.JTextField txtYearPrintS;
+    private javax.swing.JTextField txtYearPrintSD;
     // End of variables declaration//GEN-END:variables
 }

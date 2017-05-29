@@ -1,27 +1,20 @@
 package library;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LibraryFile
+public class LibraryFile extends AbstractFile
 {
-    private RandomAccessFile file;
     private final int RECORD_SIZE = 122;
 
     public LibraryFile(String fileName)
     {
-        try
-        {
-            file = new RandomAccessFile(fileName + ".dat", "rw");
-        }
-        catch (FileNotFoundException ex)
-        {Logger.getLogger(LibraryFile.class.getName()).log(Level.SEVERE, null, ex);}
+        super(fileName);
     }
     
+    @Override
     public void delete()
     {
         try {
@@ -110,6 +103,7 @@ public class LibraryFile
         return allRecords;
     }
 
+    @Override
     public int numberOfRecords()
     {
         try
@@ -119,21 +113,5 @@ public class LibraryFile
         catch (IOException ex)
         {Logger.getLogger(LibraryFile.class.getName()).log(Level.SEVERE, null, ex);}
         return -1;
-    }
-
-    private String inputString(String str, int length)
-    {
-        StringBuilder sb = new StringBuilder(str);
-        sb.setLength(length);
-        return sb.toString();
-    }
-
-    private String outputString(byte b[])
-    {
-        String str = new String(b);
-        if(str.indexOf('\0') != -1)
-            return str.substring(0, str.indexOf('\0'));
-        else
-            return str;
     }
 }
